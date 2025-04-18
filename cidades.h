@@ -1,6 +1,6 @@
-#ifndef CIDADES_H
-#define CIDADES_H
-
+#ifndef CIDADES_H 
+#define CIDADES_H 
+ 
 typedef struct { 
     char Nome[256];     // Nome do cidade 
     int Posicao;        // Posição da cidade 
@@ -15,12 +15,5 @@ typedef struct {
 Estrada *getEstrada(const char *nomeArquivo);               // Inicializa cidades no TAD indicado acima. 
 double calcularMenorVizinhanca(const char *nomeArquivo);    // Retorna a menor vizinhança. 
 char *cidadeMenorVizinhanca(const char *nomeArquivo);   // Retorna a cidade que tem menor vizinhança. 
-
-
-char* checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades);
-char* checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumDeCidades);
-char* checarNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo);
-
-
-
+ 
 #endif 
