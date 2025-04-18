@@ -1,35 +1,16 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "cidades.h"
 
-int main()
-{
-    Estrada *estrada;
+char* checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades);
+char* checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumDeCidades);
+char* checarErroNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo);
+void organizarEstrada(Estrada *estrada);
 
-    estrada = getEstrada("cidades.txt");
-    if (estrada == NULL)
-    {
-        printf("Falha ao alocar estrada\n");
-        return 1;
-    }
 
-    printf("%d\n%d\n", estrada->T, estrada->N);
-    for (int i = 0; i < estrada->N; i++)
-    {
-        printf("%d %s\n", estrada->C[i].Posicao, estrada->C[i].Nome);
-    }
-
-    free(estrada->C);
-    free(estrada);
-    return 0;
-}
-
-Estrada *getEstrada(const char *nomeArquivo)
-{
+Estrada *getEstrada(const char *nomeArquivo) {
     Estrada *Eaux;
     Cidade Caux;
     int TamanhoDaEstrada, NumDeCidades;
@@ -49,7 +30,7 @@ Estrada *getEstrada(const char *nomeArquivo)
         return NULL;
     }
 
-    if (checarNumeroDeCidades(NumDeCidades, nomeArquivo) == NULL)
+    if (checarErroNumeroDeCidades(NumDeCidades, nomeArquivo) == NULL)
     {
         fclose(Arquivo);
         return NULL;
@@ -112,12 +93,108 @@ Estrada *getEstrada(const char *nomeArquivo)
         }
     }
 
+    organizarEstrada(Eaux);
+
     fclose(Arquivo);
     return Eaux;
 }
 
-char *checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumDeCidades)
-{
+double calcularMenorVizinhanca(const char *nomeArquivo) {
+
+    Estrada *estrada = getEstrada(nomeArquivo);
+
+    double Vizinhanca[2][estrada->N]; // vizinhanca[0] guarda a posicao e vizinhanca[1] quantos km a cidade tem que manter
+
+    for(int i  = 0; i < estrada->N; i++) {
+
+        if(i == 0) { 
+            Vizinhanca[0][i] = (double) estrada->C[0].Posicao;
+            Vizinhanca[1][i] = (double) estrada->C[0].Posicao + (estrada->C[1].Posicao - estrada->C[0].Posicao) / 2.0;
+            continue;
+        }
+        
+        if(i == estrada->N - 1) {
+            Vizinhanca[0][i] = (double) estrada->C[i].Posicao;
+            Vizinhanca[1][i] = (double) ((estrada->C[i].Posicao - estrada->C[i - 1].Posicao) / 2.0) + (estrada->T - estrada->C[i].Posicao);
+            continue;
+        }
+        
+        Vizinhanca[0][i] = (double) estrada->C[i].Posicao;
+        Vizinhanca[1][i] = (double) ((estrada->C[i + 1].Posicao - estrada->C[i].Posicao) / 2.0) + ((estrada->C[i].Posicao - estrada->C[i - 1].Posicao) / 2.0);
+    }
+
+
+    double MenorVizinhanca[2];
+    MenorVizinhanca[0] = Vizinhanca[0][0];
+    MenorVizinhanca[1] = Vizinhanca[1][0];
+
+    for (int i = 0; i < estrada->N; i++)
+    {
+
+        if (Vizinhanca[1][i] < MenorVizinhanca[1])
+        {
+
+            MenorVizinhanca[0] = Vizinhanca[0][i];
+            MenorVizinhanca[1] = Vizinhanca[1][i];
+
+        }
+    }
+
+    return MenorVizinhanca[1];
+
+    
+}
+
+char *cidadeMenorVizinhanca(const char *nomeArquivo) {
+
+    Estrada *estrada = getEstrada(nomeArquivo);
+
+    double Vizinhanca[2][estrada->N]; // vizinhanca[0] guarda a posicao e vizinhanca[1] quantos km a cidade tem que manter
+
+    for(int i  = 0; i < estrada->N; i++) {
+
+        if(i == 0) { 
+            Vizinhanca[0][i] = (double) estrada->C[0].Posicao;
+            Vizinhanca[1][i] = (double) estrada->C[0].Posicao + (estrada->C[1].Posicao - estrada->C[0].Posicao) / 2.0;
+            continue;
+        }
+        
+        if(i == estrada->N - 1) {
+            Vizinhanca[0][i] = (double) estrada->C[i].Posicao;
+            Vizinhanca[1][i] = (double) ((estrada->C[i].Posicao - estrada->C[i - 1].Posicao) / 2.0) + (estrada->T - estrada->C[i].Posicao);
+            continue;
+        }
+        
+        Vizinhanca[0][i] = (double) estrada->C[i].Posicao;
+        Vizinhanca[1][i] = (double) ((estrada->C[i + 1].Posicao - estrada->C[i].Posicao) / 2.0) + ((estrada->C[i].Posicao - estrada->C[i - 1].Posicao) / 2.0);
+    }
+
+
+    double MenorVizinhanca[2];
+    MenorVizinhanca[0] = Vizinhanca[0][0];
+    MenorVizinhanca[1] = Vizinhanca[1][0];
+
+    for (int i = 0; i < estrada->N; i++)
+    {
+
+        if (Vizinhanca[1][i] < MenorVizinhanca[1])
+        {
+
+            MenorVizinhanca[0] = Vizinhanca[0][i];
+            MenorVizinhanca[1] = Vizinhanca[1][i];
+
+        }
+    }
+
+    int i = 0;
+    while(1) {
+        if (MenorVizinhanca[0] == estrada->C[i].Posicao) {return estrada->C[i].Nome; }
+        i++;
+    }
+    
+}
+
+char *checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumDeCidades) {
     char *noError = "sem erro";
 
     if (posicao < 0 || posicao > TamanhoDaEstrada)
@@ -135,8 +212,7 @@ char *checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumD
     return noError;
 }
 
-char *checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades)
-{
+char *checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades) {
     char *noError = "sem erro";
 
     if (TamanhoDaEstrada < 3 || TamanhoDaEstrada > 1000000)
@@ -154,8 +230,8 @@ char *checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades)
     return noError;
 }
 
-char *checarNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo)
-{
+char *checarErroNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo) {
+    
     char *NoError = "sem erro";
     int contador = 0;
     char linha[256];
@@ -181,4 +257,20 @@ char *checarNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo)
     }
 
     return NoError;
+}
+
+void organizarEstrada(Estrada *estrada) {
+    Cidade Caux;
+    for (int i = 0; i < estrada->N - 1; i++)
+    {
+        for (int j = 0; j < estrada->N - 1 - i; j++)
+        {
+            if (estrada->C[j].Posicao > estrada->C[j + 1].Posicao)
+            {
+                Caux = estrada->C[j];
+                estrada->C[j] = estrada->C[j + 1];
+                estrada->C[j + 1] = Caux;
+            }
+        }
+    }
 }
