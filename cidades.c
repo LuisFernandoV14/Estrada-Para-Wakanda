@@ -7,6 +7,7 @@
 char* checarErroGetEstrada(int TamanhoDaEstrada, int NumDeCidades);
 char* checarErroGetCidade(int posicao, int linha, int TamanhoDaEstrada, int NumDeCidades);
 char* checarErroNumeroDeCidades(int NumeroDeCidades, const char *nomeDoArquivo);
+void polirNomes(Estrada *estrada);
 void organizarEstrada(Estrada *estrada);
 
 
@@ -46,6 +47,8 @@ Estrada *getEstrada(const char *nomeArquivo) {
 
     Eaux->T = TamanhoDaEstrada;
     Eaux->N = NumDeCidades;
+
+    // Tecnicamente apartir daqui e um getCidade
     Eaux->C = (Cidade *)malloc(sizeof(Cidade) * NumDeCidades);
     if (Eaux->C == NULL)
     {
@@ -93,6 +96,7 @@ Estrada *getEstrada(const char *nomeArquivo) {
         }
     }
 
+    polirNomes(Eaux);
     organizarEstrada(Eaux);
 
     fclose(Arquivo);
@@ -273,4 +277,16 @@ void organizarEstrada(Estrada *estrada) {
             }
         }
     }
+}
+
+void polirNomes(Estrada *estrada) {
+
+    for( int i = 0; i < estrada->N; i++) {
+        int UltimoChar = strlen(estrada->C[i].Nome);
+        if (UltimoChar > 0 && estrada->C[i].Nome[UltimoChar - 1] == ' ') {estrada->C[i].Nome[UltimoChar - 1] = '\0'; }
+    }
+    
+    // Nos testes que eu fiz, as cidades tavam sendo armazenadas com um espaco no final (Exemplo: "Birnir Zana " e nao "Birnir Zana")
+    // Essa funcao e so pra impedir isso de acontecer
+    // (As strings estavam sendo armazenada com um espaco adicional pq eu copiei os exemplos do pdf que ele disponibilizou, e la tem espaco, mas eu nao sei como ele vai testar esse codigo ne) 
 }
