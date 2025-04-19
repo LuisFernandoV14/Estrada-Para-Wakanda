@@ -9,8 +9,8 @@ Mais uma vez, esse trabalho segue o modelo TAD de abstração de dados, mas dess
 
 As instruções detalhadas estão no arquivo "Estrada de Wakanda.pdf", a biblioteca que o professor forneceu é a "cidades.h" e a parte do código que eu fiz está em "cidades.c".
 
-Trabalho realizado pelo aluno Luís Fernando Ventura Ferreira.
-Professor: Marcelo Eustaquio Soares de Lima Junior.
+Trabalho realizado pelo aluno Luís Fernando Ventura Ferreira. 
+ Professor: Marcelo Eustaquio Soares de Lima Junior.
 Data: 18/04/2025
 
 Obrigado por ler!
