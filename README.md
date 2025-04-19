@@ -1,4 +1,4 @@
-#Estrada para Wakanda
+# Estrada para Wakanda
 
 Trabalho simples da disciplina Estrutura de Dados, ministrada no terceiro semestre do curso Engenharia de Software da Universidade Católica de Brasília.
 
